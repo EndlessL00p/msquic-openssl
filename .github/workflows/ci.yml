@@ -1,0 +1,73 @@
+# Build, package, and validate the artifacts on every push; attach them to a
+# release on tags. GHA-format kept to the subset Gitea Actions also supports
+# (Gitea reads .github/workflows/ when no .gitea/ folder exists); legs whose
+# runner labels aren't registered on a Gitea instance simply don't run there.
+name: ci
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            platform: windows-x64
+          - os: ubuntu-22.04        # oldest practical LTS = the glibc floor
+            platform: linux-x64
+          - os: macos-latest
+            platform: macos-universal
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: toolchain
+        shell: pwsh
+        run: ./scripts/setup_toolchain.ps1
+
+      - name: build + package
+        shell: pwsh
+        run: ./scripts/build.ps1 -Version "${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}"
+
+      - name: smoke (unpacked artifact, no sources)
+        shell: pwsh
+        run: |
+          $zip = Get-ChildItem dist/*.zip | Select-Object -First 1
+          ./scripts/smoke.ps1 -Archive $zip.FullName
+          exit $LASTEXITCODE
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform }}
+          path: |
+            dist/*.zip
+            dist/*.zip.sha256
+          if-no-files-found: error
+
+  release:
+    # GitHub-only (uses the gh CLI); on Gitea, grab the workflow artifacts
+    if: github.ref_type == 'tag' && github.server_url == 'https://github.com'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat dist/*.zip.sha256 > dist/SHA256SUMS
+          gh release create "${{ github.ref_name }}" dist/*.zip dist/SHA256SUMS \
+            --verify-tag --title "${{ github.ref_name }}" \
+            --notes "Static MsQuic + quictls bundles. Verify downloads against SHA256SUMS."
