@@ -1,14 +1,17 @@
 # msquic-openssl
 
-This project packages and redistributes prebuilt **static** libraries of
+This is an independent project that packages and redistributes
+prebuilt **static** libraries of:
 [MsQuic](https://github.com/microsoft/msquic) with the
 [OpenSSL](https://github.com/quictls/openssl) TLS stack, published as
 hash-verified release archives.
 
+> It is **NOT** affiliated with or endorsed by Microsoft, the MsQuic or OpenSSL projects, or thier maintainers.
+
 ## Why does this exist?
 
-I needed a prebuilt distribution of [MsQuic]+[OpenSSL] without the need
-to install Perl or NASM to compile OpenSSL.
+I needed a prebuilt distribution of **MsQuic+OpenSSL** without the need
+to install the full toolchain (Perl/NASM) to compile OpenSSL.
 
 For convenience, you can use this project with CMake in two ways:
 - use a prebuilt archive
@@ -19,7 +22,7 @@ Both expose the same targets via FetchContent
 
 ## AI disclosure
 
-This build tooling was entirely written by Claude Mythos.
+This build tooling was entirely written by Claude Fable 5.
 
 ## Archive Contents
 

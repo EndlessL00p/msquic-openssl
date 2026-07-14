@@ -1,3 +1,7 @@
+The following licence covers the build tooling in this project only.
+Major components MsQuic and OpenSSL remain licensed under their respective licenses.
+see THIRD_PARTY_NOTICES. A copy of each of those licences is included in each built package.
+
 MIT License
 
 Copyright (c) 2026 Owen Wigg
