@@ -31,3 +31,7 @@ install(FILES ${msquic_SOURCE_DIR}/submodules/quictls/LICENSE.txt
 # MsQuic's own install() rules run too and leave a share/msquic config that
 # doesn't apply to this layout; drop it (this rule runs after MsQuic's)
 install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/share\")")
+if(WIN32)
+    # the MsQuic install() also creates a redundant copy of the debug lib, drop it too
+    install(CODE "file(REMOVE \"\${CMAKE_INSTALL_PREFIX}/lib/msquic.lib\")")
+endif()
