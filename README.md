@@ -3,14 +3,16 @@
 This is an independent project that packages and redistributes
 prebuilt **static** libraries of:
 [MsQuic](https://github.com/microsoft/msquic) with the
-[OpenSSL](https://github.com/quictls/openssl) TLS stack, published as
+[quictls](https://github.com/quictls/openssl) TLS stack, published as
 hash-verified release archives.
 
 > It is **NOT** affiliated with or endorsed by Microsoft, the MsQuic or OpenSSL projects, or thier maintainers.
 
+This project will switch to OpenSSL as the MsQuic TLS provider once support hits a versioned release.
+
 ## Why does this exist?
 
-I needed a prebuilt distribution of **MsQuic+OpenSSL** without the need
+I needed a prebuilt distribution of **MsQuic+quictls** without the need
 to install the full toolchain (Perl/NASM) to compile OpenSSL.
 
 For convenience, you can use this project with CMake in two ways:
