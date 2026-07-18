@@ -7,10 +7,7 @@
 # to install elsewhere. Idempotent; CI runs it too.
 
 $ErrorActionPreference = 'Stop'
-
-# $IsWindows/$IsMacOS don't exist in Windows PowerShell 5.1 (Desktop edition)
-$onWindows = ($PSVersionTable.PSEdition -eq 'Desktop') -or $IsWindows
-$onMac = (-not $onWindows) -and $IsMacOS
+. (Join-Path $PSScriptRoot 'common.ps1')
 
 function Test-Command($name) {
     return $null -ne (Get-Command $name -ErrorAction SilentlyContinue)
@@ -76,6 +73,19 @@ if ($onWindows) {
     if (-not (Test-Command clang)) {
         Write-Warning 'no C compiler found - run: xcode-select --install'
     }
+}
+
+# Cross targets (scripts/build.ps1 -Target ios|android) are opt-in; report
+# what's available rather than installing multi-GB SDKs
+if ($onMac) {
+    $iosSdk = if (Test-Command xcrun) { & xcrun --sdk iphoneos --show-sdk-path 2>$null } else { $null }
+    if ($iosSdk) { Write-Host 'found iOS SDK (for -Target ios)' }
+    else { Write-Host 'no iOS SDK - -Target ios needs full Xcode' }
+}
+if (-not $onWindows) {
+    $ndk = Find-AndroidNdk
+    if ($ndk) { Write-Host "found Android NDK: $ndk" }
+    else { Write-Host 'no Android NDK - -Target android needs ANDROID_NDK_HOME set' }
 }
 
 Write-Host ''

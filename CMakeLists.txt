@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.21)
 
 # The MsQuic release this project wraps. Artifact tags are <MSQUIC_TAG>-<rev>.
 set(MSQUIC_TAG "v2.5.9" CACHE STRING "MsQuic release tag to build")

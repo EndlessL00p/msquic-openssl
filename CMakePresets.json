@@ -1,0 +1,65 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 21, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "release",
+      "hidden": true,
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "windows",
+      "description": "Debug + Release from one tree needs a multi-config generator; the environment-dependent default (plain Ninja) would silently ignore --config and ship a Debug-only artifact",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "linux",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build"
+    },
+    {
+      "name": "macos-arm64",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build-arm64",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "11.0"
+      }
+    },
+    {
+      "name": "macos-x86_64",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build-x86_64",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "x86_64",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "11.0"
+      }
+    },
+    {
+      "name": "ios",
+      "description": "Same flags MsQuic's own build uses for ios (PLATFORM=OS64: device arm64). The toolchain file is MsQuic's vendored ios.cmake, downloaded by scripts/build.ps1 before configure",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build-ios",
+      "toolchainFile": "${sourceDir}/build-ios/ios-toolchain.cmake",
+      "cacheVariables": {
+        "PLATFORM": "OS64",
+        "ENABLE_ARC": "0",
+        "DEPLOYMENT_TARGET": "13.0",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "13.0"
+      }
+    },
+    {
+      "name": "android",
+      "description": "Needs ANDROID_NDK_HOME set and the NDK's llvm bin dir on PATH (MsQuic's OpenSSL configure reads both). android-29 matches the API floor MsQuic hardcodes into its OpenSSL build. Other ABIs: -DANDROID_ABI=... -B build-android-<abi>",
+      "inherits": "release",
+      "binaryDir": "${sourceDir}/build-android-arm64-v8a",
+      "toolchainFile": "$env{ANDROID_NDK_HOME}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "ANDROID_ABI": "arm64-v8a",
+        "ANDROID_PLATFORM": "android-29",
+        "ANDROID_NDK": "$env{ANDROID_NDK_HOME}"
+      }
+    }
+  ]
+}

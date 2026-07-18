@@ -23,6 +23,12 @@ jobs:
             platform: linux-x64
           - os: macos-latest
             platform: macos-universal
+          - os: macos-latest        # cross-compiled; smoke is link-only
+            platform: ios-arm64
+            target: ios
+          - os: ubuntu-22.04        # cross-compiled (runner's preinstalled NDK); smoke is link-only
+            platform: android-arm64
+            target: android
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -33,13 +39,13 @@ jobs:
 
       - name: build + package
         shell: pwsh
-        run: ./scripts/build.ps1 -Version "${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}"
+        run: ./scripts/build.ps1 -Version "${{ github.ref_type == 'tag' && github.ref_name || 'dev' }}" -Target "${{ matrix.target }}"
 
       - name: smoke (unpacked artifact, no sources)
         shell: pwsh
         run: |
           $zip = Get-ChildItem dist/*.zip | Select-Object -First 1
-          ./scripts/smoke.ps1 -Archive $zip.FullName
+          ./scripts/smoke.ps1 -Archive $zip.FullName -Target "${{ matrix.target }}"
           exit $LASTEXITCODE
 
       - uses: actions/upload-artifact@v4
