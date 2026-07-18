@@ -4,7 +4,7 @@ This is an independent project that packages and redistributes
 prebuilt **static** libraries of:
 [MsQuic](https://github.com/microsoft/msquic) with the
 [quictls](https://github.com/quictls/openssl) TLS stack, published as
-hash-verified release archives.
+hash-verified release archives for use with CMake.
 
 > It is **NOT** affiliated with or endorsed by Microsoft, the MsQuic or OpenSSL projects, or thier maintainers.
 
