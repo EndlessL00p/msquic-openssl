@@ -28,6 +28,17 @@ FetchContent_Declare(msquic
     GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(msquic)
 
+# MsQuic's src/core/CMakeLists.txt turns on /analyze (PREfast) for the `core`
+# target on MSVC, paired with its own blanket /WX. We only consume the
+# compiled output, not MsQuic's dev-time static analysis, so a newer MSVC
+# toolset flagging a fresh PREfast false positive there (the toolset version
+# isn't pinned by this project) shouldn't be able to break our build.
+# /analyze- after /analyze on the command line turns analysis back off for
+# this target.
+if(MSVC AND TARGET core)
+    target_compile_options(core PRIVATE /analyze-)
+endif()
+
 #----------------------------------------------------------------------------------
 # Exported interface - identical target names in source mode (this file) and
 # artifact mode (cmake/msquic-openssl-config.cmake in release archives), so
