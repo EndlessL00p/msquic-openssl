@@ -1,7 +1,8 @@
+# 3.21: CMakePresets.json schema version 3 (toolchainFile field)
 cmake_minimum_required(VERSION 3.21)
 
 # The MsQuic release this project wraps. Artifact tags are <MSQUIC_TAG>-<rev>.
-set(MSQUIC_TAG "v2.5.9" CACHE STRING "MsQuic release tag to build")
+set(MSQUIC_TAG "v2.6.1" CACHE STRING "MsQuic release tag to build")
 
 project(msquic-openssl LANGUAGES C CXX)
 
@@ -10,10 +11,11 @@ if(NOT _multi_config AND NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "" FORCE)
 endif()
 
-# MsQuic build configuration: static, OpenSSL(quictls) TLS stack, nothing else. The
-# quictls flag set itself (the no-* list) is MsQuic's own, in its
+# MsQuic build configuration: static, OpenSSL TLS stack (the real thing, built
+# from MsQuic's submodules/openssl pin via OpenSSL 3.5's native QUIC TLS API),
+# nothing else. The flag set itself (the no-* list) is MsQuic's own, in its
 # submodules/CMakeLists.txt - not restated here, so it cannot drift.
-set(QUIC_TLS_LIB "quictls" CACHE STRING "" FORCE)
+set(QUIC_TLS_LIB "openssl" CACHE STRING "" FORCE)
 set(QUIC_BUILD_SHARED OFF CACHE BOOL "" FORCE)
 set(QUIC_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
 set(QUIC_BUILD_TEST OFF CACHE BOOL "" FORCE)
@@ -33,7 +35,7 @@ FetchContent_MakeAvailable(msquic)
 #
 #   msquic::msquic - the QUIC library (TLS stack included) + msquic headers +
 #                    platform link requirements
-#   msquic::crypto - the bundled quictls libcrypto + openssl headers, for
+#   msquic::crypto - the bundled OpenSSL libcrypto + openssl headers, for
 #                    consumers doing their own certificate work
 #----------------------------------------------------------------------------------
 

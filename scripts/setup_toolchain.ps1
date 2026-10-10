@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 # One-time build prerequisites - all platforms, one script.
 #
-# The quictls (OpenSSL) build needs Perl, and on Windows NASM and the VS C++
+# The OpenSSL build needs Perl, and on Windows NASM and the VS C++
 # toolset (scripts/build.ps1 enters the VS developer environment itself).
 # Installs what's missing via winget (Windows) or brew (macOS); prints what
 # to install elsewhere. Idempotent; CI runs it too.

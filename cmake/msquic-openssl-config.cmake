@@ -4,7 +4,7 @@
 #
 #   msquic::msquic - the QUIC library (TLS stack included) + msquic headers +
 #                    platform link requirements
-#   msquic::crypto - the bundled quictls/OpenSSL libcrypto + openssl headers
+#   msquic::crypto - the bundled OpenSSL libcrypto + openssl headers
 #
 # The archive is per-platform, so platform checks here always match.
 

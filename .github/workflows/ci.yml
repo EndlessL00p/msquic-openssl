@@ -76,4 +76,4 @@ jobs:
           cat dist/*.zip.sha256 > dist/SHA256SUMS
           gh release create "${{ github.ref_name }}" dist/*.zip dist/SHA256SUMS \
             --verify-tag --title "${{ github.ref_name }}" \
-            --notes "Static MsQuic + quictls bundles. Verify downloads against SHA256SUMS."
+            --notes "Static MsQuic + OpenSSL bundles. Verify downloads against SHA256SUMS."

@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
 # Validate a packaged archive: unpack it and build + run tests/smoke against
-# it with no MsQuic/quictls sources present. No release without this passing.
+# it with no MsQuic/OpenSSL sources present. No release without this passing.
 # Cross targets (ios/android) can't run on the build host, so validation is
 # the link: the smoke binary must build against the artifact.
 param(

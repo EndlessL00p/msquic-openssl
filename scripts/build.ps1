@@ -11,9 +11,9 @@
 # cmake --preset <name>); this script adds what presets can't express: host
 # prerequisites, staging, lipo, provenance, and the archive.
 #
-# What CI runs, reproducible by a human: scripts/build.ps1 -Version v2.5.9-1
+# What CI runs, reproducible by a human: scripts/build.ps1 -Version v2.6.1-1
 param(
-    [string]$Version = 'dev',       # artifact version label, e.g. v2.5.9-1
+    [string]$Version = 'dev',       # artifact version label, e.g. v2.6.1-1
     [ValidateSet('', 'ios', 'android')]
     [string]$Target = '',           # cross-compile target; default is the host platform
     [ValidateSet('arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64')]
@@ -151,7 +151,7 @@ if ($Target -eq 'ios') {
 # generated CMakeCCompiler.cmake - which always records the real path -
 # everywhere else.
 $msquicTag = Get-CacheValue $versionsBuild 'MSQUIC_TAG'
-$quictlsCommit = git -C "$versionsBuild/_deps/msquic-src/submodules/quictls" rev-parse HEAD
+$opensslCommit = git -C "$versionsBuild/_deps/msquic-src/submodules/openssl" rev-parse HEAD
 $compiler = if ($onWindows) { (Get-Command cl).Source } else {
     $ccFile = Get-ChildItem "$versionsBuild/CMakeFiles/*/CMakeCCompiler.cmake" | Select-Object -First 1
     $hit = if ($ccFile) { Select-String -Path $ccFile -Pattern 'set\(CMAKE_C_COMPILER "(.+)"\)' |
@@ -161,7 +161,7 @@ $compiler = if ($onWindows) { (Get-Command cl).Source } else {
 }
 @(
     "msquic:   $msquicTag"
-    "quictls:  $quictlsCommit"
+    "openssl:  $opensslCommit"
     "compiler: $compiler"
     "platform: $platform"
     "built:    $((Get-Date).ToUniversalTime().ToString('yyyy-MM-dd HH:mm')) UTC"

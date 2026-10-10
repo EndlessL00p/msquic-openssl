@@ -1,5 +1,5 @@
 /* Artifact smoke test: proves an unpacked release archive is linkable and
-   functional with no MsQuic/quictls sources present. Exercises both exported
+   functional with no MsQuic/OpenSSL sources present. Exercises both exported
    targets: MsQuicOpen2 (msquic::msquic) and SHA256 (msquic::crypto). */
 
 #include <msquic.h>

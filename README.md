@@ -3,17 +3,13 @@
 This is an independent project that packages and redistributes
 prebuilt **static** libraries of:
 [MsQuic](https://github.com/microsoft/msquic) with the
-[quictls](https://github.com/quictls/openssl) TLS stack, published as
-hash-verified release archives for use with CMake.
-
-> It is **NOT** affiliated with or endorsed by Microsoft, the MsQuic or OpenSSL projects, or thier maintainers.
-
-This project will switch to OpenSSL as the MsQuic TLS provider once support hits a versioned release.
+[OpenSSL](https://github.com/openssl/openssl) TLS stack, published as
+hash-verified release archives.
 
 ## Why does this exist?
 
-I needed a prebuilt distribution of **MsQuic+quictls** without the need
-to install the full toolchain (Perl/NASM) to compile OpenSSL.
+I needed a prebuilt distribution of [MsQuic]+[OpenSSL] without the need
+to install Perl or NASM to compile OpenSSL.
 
 For convenience, you can use this project with CMake in two ways:
 - use a prebuilt archive
@@ -24,11 +20,11 @@ Both expose the same targets via FetchContent
 
 ## AI disclosure
 
-This build tooling was entirely written by Claude Fable 5.
+This build tooling was entirely written by Claude Mythos.
 
 ## Archive Contents
 
-Each archive contains the MsQuic public headers, the quictls `openssl/`
+Each archive contains the MsQuic public headers, the OpenSSL `openssl/`
 headers, one self-contained static library (libssl and libcrypto objects
 included), and a CMake package config:
 
@@ -58,6 +54,11 @@ platform link requirements (Windows system libraries, Apple frameworks).
 Windows archives ship Release **and** Debug libraries; multi-config
 generators pick the matching CRT flavor automatically.
 
+Cross-compiling consumers (iOS/Android): toolchains restrict `find_package`
+to the target sysroot, and the unpacked archive lives outside it — set
+`CMAKE_FIND_ROOT_PATH_MODE_PACKAGE` to `BOTH` before the `find_package`
+call (see `tests/smoke/CMakeLists.txt`).
+
 Verify downloads against the `SHA256SUMS` attached to each release (CMake:
 pass `URL_HASH` to FetchContent).
 
@@ -69,14 +70,17 @@ The same targets, defined by building MsQuic+OpenSSL locally:
 include(FetchContent)
 FetchContent_Declare(msquic-openssl
     GIT_REPOSITORY <this repo>
-    GIT_TAG v2.5.9-1)
+    GIT_TAG v2.6.1-1)
 FetchContent_MakeAvailable(msquic-openssl)
 # msquic::msquic and msquic::crypto now exist, identical to the artifact's
 ```
 
-Prerequisites for source builds: CMake, a C/C++ toolchain, Perl; Windows
-also NASM (`scripts/setup_toolchain.ps1` installs what's missing —
+Prerequisites for source builds: CMake ≥ 3.21, a C/C++ toolchain, Perl;
+Windows also NASM (`scripts/setup_toolchain.ps1` installs what's missing —
 PowerShell 7 on macOS/Linux: `brew install --cask powershell`).
+Per-platform configure flags live in `CMakePresets.json`
+(`cmake --list-presets`), so a plain `cmake --preset <name>` build works
+without the scripts.
 
 ## Reproducing an artifact
 
@@ -91,10 +95,15 @@ Windows, builds both CRT configs there, and produces universal
 (arm64 + x86_64) libraries on macOS. CI runs exactly these scripts; release
 artifacts are only ever built by CI from a tagged commit.
 
+iOS and Android archives are cross-compiled: `-Target ios` (macOS host with
+Xcode; device arm64) or `-Target android` (needs `ANDROID_NDK_HOME`; ABI via
+`-AndroidAbi`, default `arm64-v8a`). Pass the same `-Target` to `smoke.ps1`,
+which then validates by linking the smoke binary rather than running it.
+
 ## Versioning
 
-Tags are `<msquic tag>-<packaging revision>`: `v2.5.9-1` wraps MsQuic
-v2.5.9; a `-2` would fix packaging only. The `VERSIONS` file in every
+Tags are `<msquic tag>-<packaging revision>`: `v2.6.1-1` wraps MsQuic
+v2.6.1; a `-2` would fix packaging only. The `VERSIONS` file in every
 archive records the exact msquic tag and openssl commit inside.
 
 ## License
